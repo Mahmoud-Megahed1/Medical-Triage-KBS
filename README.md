@@ -34,6 +34,19 @@ flowchart LR
 
 ---
 
+## Course Requirements & 4-Phase Compliance (IS438)
+
+This project was designed specifically to satisfy all practical deliverables required for **IS438 (New Trends in Information Systems)** using a domain that directly benefits from multi-hop Knowledge Graph traversal rather than flat relational tables:
+
+| Required Phase | Course Deliverable | Implemented Solution & Artifacts |
+| :--- | :--- | :--- |
+| **Phase 1 — Knowledge Graph** | Build a Neo4j Knowledge Graph from CSV data with working Cypher queries and valid entity relationships | Normalized 9-file CSV dataset in `data/`, automated Bolt CSV loader (`src/neo4j_loader.py`), full Cypher schema & `LOAD CSV` script (`cypher/schema.cypher`), and working traversal queries (`cypher/queries.cypher`). |
+| **Phase 2 — Inference Engine** | Execute logical rules, deduce eligibility/priority decisions, and explain the reasoning (`Why / Why Not`) | `src/inference_engine.py` executes multi-cycle Forward Chaining & Modus Ponens inside `WorkingMemory`, combining vital-sign thresholds, Red-Flag blocks, symptom matching, and comorbidity risk amplification into `TriageTrace`. |
+| **Phase 3 — Python Integration** | Connect Python to the Knowledge Base, validate results, and handle errors gracefully | Dual-mode `MedicalTriageEngine` connects via Neo4j `Bolt` (`LIVE_NEO4J`) with real Cypher queries, falls back cleanly to `LOCAL_GRAPH` when Neo4j is offline, raises explicit `KeyError` on invalid IDs, and passes 11 automated unit tests (`tests/test_inference_engine.py`). |
+| **Phase 4 — User Interface** | Build a Streamlit interface where the user selects/enters an ID and views decisions and reasoning | Bilingual (`EN` / `AR` BiDi-safe) dashboard (`src/app.py`) allowing lookup by `Patient ID` (`P01`–`P07`) or live simulation, displaying ESI triage urgency, differential diagnosis, safety contraindications, formal rule trace, and an interactive `PyVis` graph. |
+
+---
+
 ## Knowledge Graph Ontology & Schema
 
 The graph schema models clinical triage relationships rather than isolated tables:
