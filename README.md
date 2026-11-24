@@ -143,7 +143,12 @@ Medical-Triage-KBS/
 │   ├── risk_factors.csv           8 baseline risk factors (Hypertension, Diabetes, Age >= 65, etc.)
 │   └── symptoms.csv               24 symptoms tagged by body system and Red-Flag status
 ├── src/
-│   ├── app.py                     Bilingual Light-Mode Streamlit UI + PyVis knowledge graph
+│   ├── ui/
+│   │   ├── __init__.py
+│   │   ├── components.py          Reusable Design-System UI & 360-deg Knowledge Graph renderer
+│   │   ├── i18n_ar.py             BiDi-isolated Arabic clinical translations
+│   │   └── theme.css              Design tokens, surface hierarchy, typography & spring motion
+│   ├── app.py                     URL-persistent Streamlit entry point & orchestration
 │   ├── inference_engine.py        Dual-mode Forward-Chaining & Modus Ponens inference engine
 │   └── neo4j_loader.py            Automated Python CSV-to-Neo4j Bolt loader
 ├── tests/
