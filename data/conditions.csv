@@ -1,0 +1,14 @@
+condition_id,name,triage_level,urgency_label,department,max_wait_minutes,clinical_summary
+COND01,Acute Coronary Syndrome (STEMI Risk),ESI-1,Immediate Resuscitation,Cardiology / Cath Lab,0,High probability of myocardial ischemia requiring immediate ECG and reperfusion evaluation.
+COND02,Acute Ischemic Stroke / TIA,ESI-1,Immediate Resuscitation,Neurology / Stroke Unit,0,Time-critical neurological deficit requiring immediate non-contrast head CT and stroke activation.
+COND03,Anaphylaxis (Airway Compromise),ESI-1,Immediate Resuscitation,Resuscitation Bay,0,Life-threatening systemic hypersensitivity with upper airway edema risk.
+COND04,Bacterial Meningitis,ESI-2,Emergent Priority,Emergency Isolation / ICU,10,Acute CNS infection indicated by fever and meningeal irritation requiring urgent empiric antibiotics.
+COND05,Sepsis / Systemic Infection,ESI-2,Emergent Priority,Emergency Critical Care,10,Suspected systemic infection with hemodynamic or mental status compromise.
+COND06,Diabetic Ketoacidosis (DKA),ESI-2,Emergent Priority,Emergency Acute Care,10,Acute metabolic decompensation with hyperglycemia and ketosis risk.
+COND07,Hypertensive Crisis,ESI-2,Emergent Priority,Emergency Acute Care,10,Severely elevated blood pressure with potential end-organ neurological symptoms.
+COND08,Severe Asthma Exacerbation,ESI-2,Emergent Priority,Pulmonary Emergency,10,Acute bronchospasm causing significant respiratory distress and hypoxia risk.
+COND09,Acute Appendicitis,ESI-3,Urgent Evaluation,Emergency Surgery,30,Focal right lower quadrant peritoneal irritation requiring surgical consult and imaging.
+COND10,Community-Acquired Pneumonia,ESI-3,Urgent Evaluation,Internal Medicine / ER,30,Lower respiratory tract bacterial infection requiring chest imaging and antibiotic therapy.
+COND11,Acute Gastroenteritis (Dehydration Risk),ESI-4,Less Urgent Standard,Urgent Care / ER Fast Track,60,Gastrointestinal fluid loss requiring hydration assessment and electrolyte check.
+COND12,Classic Migraine Attack,ESI-4,Less Urgent Standard,Outpatient / Fast Track,60,Primary neurovascular headache without red-flag meningeal or focal signs.
+COND13,Viral Upper Respiratory Infection,ESI-5,Non-Urgent Outpatient,Outpatient Clinic,120,Self-limiting viral rhinitis/pharyngitis suitable for routine clinic care.

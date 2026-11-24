@@ -1,0 +1,16 @@
+risk_id,condition_id,escalation_points,clinical_rationale
+RF01,COND01,15,Chronic hypertension accelerates myocardial oxygen demand and plaque rupture risk
+RF01,COND07,25,Baseline hypertension predisposes to acute hypertensive crisis
+RF02,COND01,15,Diabetes can cause silent or atypical myocardial ischemia
+RF02,COND06,25,Insulin deficiency triggers rapid ketoacidosis progression
+RF02,COND05,15,Impaired immune response increases sepsis risk
+RF03,COND01,25,Prior coronary disease directly elevates Acute Coronary Syndrome probability
+RF04,COND08,25,Existing reactive airway disease amplifies acute bronchospasm severity
+RF04,COND10,15,Baseline lung compromise increases hypoxia risk during pneumonia
+RF05,COND04,20,Immunosuppression increases meningitis dissemination risk
+RF05,COND05,25,Immunocompromised patients progress rapidly to septic shock
+RF06,COND02,25,Anticoagulation dramatically raises intracranial bleed risk
+RF07,COND03,25,Prior severe allergy history primes rapid anaphylactic reaction
+RF08,COND01,15,Advanced age increases acute cardiac mortality risk
+RF08,COND05,15,Elderly patients have higher sepsis decompensation rates
+RF08,COND10,15,Advanced age increases pneumonia hospitalization need

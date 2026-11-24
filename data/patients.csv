@@ -1,0 +1,8 @@
+patient_id,name,age,gender,hr_bpm,bp_sys,bp_dia,spo2_pct,temp_c,rr_bpm,chief_complaint
+P01,Khaled Mansour,58,Male,118,162,96,93,37.1,24,"Crushing chest pressure with left arm radiation and cold sweat"
+P02,Salma Hassan,24,Female,92,115,74,99,37.3,16,"Mild sore throat, nasal congestion, and mild body aches for 2 days"
+P03,Tarek El-Sayed,69,Male,126,86,54,88,39.6,28,"High fever, rigors, shortness of breath, and confusion"
+P04,Nourhan Adel,29,Female,134,94,60,91,37.0,26,"Sudden throat tightness and generalized hives after eating shellfish"
+P05,Youssef Ibrahim,22,Male,102,122,78,98,38.2,18,"Right lower abdominal pain with fever and nausea"
+P06,Amina Fathy,34,Female,78,118,76,99,36.8,15,"Unilateral throbbing headache with visual aura and mild nausea"
+P07,Omar Nabil,41,Male,116,128,82,92,37.1,27,"Acute wheezing and shortness of breath unresponsive to home inhaler"

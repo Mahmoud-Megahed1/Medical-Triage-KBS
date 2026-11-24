@@ -1,0 +1,9 @@
+risk_id,name,category,escalation_note
+RF01,Hypertension,Cardiovascular,Increases acute coronary and hemorrhagic stroke severity
+RF02,Type 2 Diabetes,Metabolic,Can mask typical angina symptoms and predisposes to DKA/Sepsis
+RF03,Coronary Artery Disease,Cardiovascular,High baseline probability of recurrent acute ischemia
+RF04,Asthma / COPD,Respiratory,Rapid decompensation risk during respiratory distress
+RF05,Immunocompromised State,Immunological,Accelerates sepsis and CNS infection progression
+RF06,Anticoagulant Therapy,Hematologic,High intracranial hemorrhage risk with sudden headache or trauma
+RF07,Severe Allergy History,Immunological,Elevates anaphylaxis airway compromise urgency
+RF08,Age >= 65 Years,Demographic,Reduces physiological reserve and elevates sepsis/cardiac risk

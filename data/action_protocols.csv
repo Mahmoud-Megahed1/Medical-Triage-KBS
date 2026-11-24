@@ -1,0 +1,18 @@
+protocol_id,condition_id,action_type,instruction,timeframe
+PROT01,COND01,IMMEDIATE_INTERVENTION,"Perform 12-lead ECG within 10 minutes and establish IV access",Immediate (< 10 min)
+PROT02,COND01,DIAGNOSTIC_WORKUP,"Stat High-Sensitivity Troponin I, CBC, CMP, and Chest X-Ray",Stat
+PROT03,COND01,CONTRAINDICATION,"Do NOT discharge to outpatient clinic or delay ECG for waiting room intake",Strict Prohibition
+PROT04,COND02,IMMEDIATE_INTERVENTION,"Activate Code Stroke team and obtain Stat Non-Contrast Head CT",Immediate (< 10 min)
+PROT05,COND02,CONTRAINDICATION,"Do NOT administer oral fluids, food, or antiplatelets before CT rules out hemorrhage",Strict Prohibition
+PROT06,COND03,IMMEDIATE_INTERVENTION,"Prepare IM Epinephrine 0.3-0.5 mg, high-flow oxygen, and airway kit",Immediate (0 min)
+PROT07,COND04,IMMEDIATE_INTERVENTION,"Initiate droplet isolation, blood cultures, and urgent empiric IV antibiotics",Immediate (< 15 min)
+PROT08,COND05,IMMEDIATE_INTERVENTION,"Start Sepsis-1 bundle: Lactate, blood cultures, IV crystalloids, broad-spectrum antibiotics",Within 30 min
+PROT09,COND06,IMMEDIATE_INTERVENTION,"Check capillary glucose/ketones, ABG/VBG, and initiate IV Normal Saline resuscitation",Immediate (< 15 min)
+PROT10,COND07,DIAGNOSTIC_WORKUP,"Repeat bilateral BP check, fundoscopy, ECG, renal panel, and troponin",Within 15 min
+PROT11,COND08,IMMEDIATE_INTERVENTION,"Administer nebulized SABA + ipratropium and continuous pulse oximetry",Immediate (< 10 min)
+PROT12,COND09,DIAGNOSTIC_WORKUP,"NPO status, CBC, CRP, surgical consultation, and abdominal ultrasound/CT",Within 30 min
+PROT13,COND09,CONTRAINDICATION,"Do NOT give oral analgesics or laxatives prior to surgical evaluation",Clinical Caution
+PROT14,COND10,DIAGNOSTIC_WORKUP,"Obtain Chest X-Ray, pulse oximetry, and sputum/blood cultures if febrile",Within 30 min
+PROT15,COND11,IMMEDIATE_INTERVENTION,"Oral or IV rehydration therapy and serum electrolytes assessment",Within 60 min
+PROT16,COND12,IMMEDIATE_INTERVENTION,"Quiet dark room evaluation and targeted non-opioid migraine protocol",Within 60 min
+PROT17,COND13,IMMEDIATE_INTERVENTION,"Outpatient supportive care guidance, hydration, and return-precaution instructions",Routine Clinic

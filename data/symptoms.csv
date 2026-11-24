@@ -1,0 +1,25 @@
+symptom_id,name,body_system,is_red_flag,severity_weight
+SYM01,Crushing Chest Pain,Cardiovascular,True,5
+SYM02,Radiating Left Arm or Jaw Pain,Cardiovascular,True,5
+SYM03,Severe Shortness of Breath,Respiratory,True,5
+SYM04,Sudden Facial Droop or Arm Weakness,Neurological,True,5
+SYM05,Slurred Speech or Sudden Confusion,Neurological,True,5
+SYM06,Neck Stiffness with Photophobia,Neurological,True,5
+SYM07,Throat Swelling or Stridor,Respiratory,True,5
+SYM08,Localized Right Lower Quadrant Abdominal Pain,Gastrointestinal,False,4
+SYM09,High Persistent Fever,Infectious,False,3
+SYM10,Wheezing and Expiratory Distress,Respiratory,False,4
+SYM11,Severe Sudden Headache,Neurological,True,5
+SYM12,Unilateral Throbbing Headache with Aura,Neurological,False,2
+SYM13,Productive Cough with Purulent Sputum,Respiratory,False,3
+SYM14,Persistent Vomiting and Diarrhea,Gastrointestinal,False,3
+SYM15,Mild Sore Throat and Nasal Congestion,Respiratory,False,1
+SYM16,Low-Grade Fever,Infectious,False,1
+SYM17,Generalized Rash or Hives,Immunological,False,3
+SYM18,Dizziness or Near-Syncope,Cardiovascular,True,4
+SYM19,Excessive Thirst and Fruity Breath Odor,Metabolic,True,5
+SYM20,Blurred Vision with Severe Headache,Cardiovascular,True,4
+SYM21,Diaphoresis (Cold Sweating),Cardiovascular,True,4
+SYM22,Rigors and Altered Mental Status,Infectious,True,5
+SYM23,Mild Muscle Aches and Fatigue,Musculoskeletal,False,1
+SYM24,Rebound Abdominal Tenderness,Gastrointestinal,True,5
