@@ -1117,7 +1117,7 @@ with tab3:
     )
 
 # ------------------------------------------------------------------------------
-# TAB 4: KNOWLEDGE GRAPH
+# TAB 4: KNOWLEDGE GRAPH (360° FREE DRAG + UNTANGLED EDGES + KARIM STYLE)
 # ------------------------------------------------------------------------------
 with tab4:
     st.markdown(f"#### {'المخطط الفرعي التفاعلي لشبكة المعرفة السريرية' if is_ar else 'Interactive Clinical Knowledge Graph Subgraph'}")
@@ -1127,15 +1127,26 @@ with tab4:
     std_lbl = "عرض اعتيادي" if is_ar else "Standard Symptom"
     risk_lbl = "عامل خطورة" if is_ar else "Risk Factor"
     cond_lbl = "حالة مرضية" if is_ar else "Condition"
+    proto_lbl = "بروتوكول علاجي" if is_ar else "Clinical Protocol"
 
+    kg_ctrl1, kg_ctrl2, kg_ctrl3 = st.columns(3)
+    with kg_ctrl1:
+        kg_show_edges = st.checkbox("إظهار مسميات العلاقات" if is_ar else "Show Edge Labels", value=True, key="kg_edge_lbls")
+    with kg_ctrl2:
+        kg_show_protos = st.checkbox("إظهار طبقة البروتوكولات" if is_ar else "Include Clinical Protocols", value=False, key="kg_protos")
+    with kg_ctrl3:
+        kg_physics = st.checkbox("تنافر تلقائي لفك التشابك" if is_ar else "Auto-Repulsion Physics", value=False, key="kg_physics")
+
+    proto_legend_html = f'<span><span style="color:#0284c7;">■</span> <strong>{proto_lbl}</strong></span>' if kg_show_protos else ""
     st.html(
         f"""
-        <div style="display:flex;flex-wrap:wrap;gap:14px;font-size:12px;background:#ffffff;border:1px solid #e2e8f0;padding:8px 14px;border-radius:6px;margin-bottom:10px;">
+        <div style="display:flex;flex-wrap:wrap;gap:14px;font-size:12px;background:#ffffff;border:1px solid #e2e8f0;padding:8px 14px;border-radius:6px;margin-bottom:10px;align-items:center;">
             <span><span style="color:#2563eb;">●</span> <strong>{p_lbl}</strong></span>
             <span><span style="color:#dc2626;">●</span> <strong>{rf_lbl}</strong></span>
             <span><span style="color:#059669;">●</span> <strong>{std_lbl}</strong></span>
-            <span><span style="color:#d97706;">●</span> <strong>{risk_lbl}</strong></span>
-            <span><span style="color:#7c3aed;">●</span> <strong>{cond_lbl}</strong></span>
+            <span><span style="color:#d97706;">▲</span> <strong>{risk_lbl}</strong></span>
+            <span><span style="color:#7c3aed;">■</span> <strong>{cond_lbl}</strong></span>
+            {proto_legend_html}
         </div>
         """
     )
@@ -1143,100 +1154,300 @@ with tab4:
     try:
         from pyvis.network import Network
 
-        net = Network(height="560px", width="100%", bgcolor="#ffffff", font_color="#0f172a")
-        net.set_options("""
-        {
-          "layout": {
-            "improvedLayout": true,
-            "hierarchical": {
+        net = Network(height="580px", width="100%", bgcolor="#fcfdff", font_color="#0f172a")
+        physics_cfg = (
+            """
+            "physics": {
               "enabled": true,
-              "direction": "LR",
-              "sortMethod": "directed",
-              "levelSeparation": 240,
-              "nodeSpacing": 120,
-              "treeSpacing": 160
+              "solver": "repulsion",
+              "repulsion": {
+                "nodeDistance": 250,
+                "centralGravity": 0.08,
+                "springLength": 230,
+                "springConstant": 0.03,
+                "damping": 0.25
+              },
+              "stabilization": { "enabled": true, "iterations": 120 }
             }
-          },
-          "physics": { "enabled": false },
-          "interaction": { "dragNodes": true, "zoomView": true, "dragView": true, "hover": true },
-          "edges": {
-            "smooth": { "type": "cubicBezier", "forceDirection": "horizontal", "roundness": 0.4 },
-            "arrows": { "to": { "enabled": true, "scaleFactor": 0.75 } }
-          }
-        }
+            """
+            if kg_physics
+            else '"physics": { "enabled": false }'
+        )
+
+        net.set_options(f"""
+        {{
+          "layout": {{
+            "improvedLayout": false,
+            "hierarchical": {{ "enabled": false }}
+          }},
+          {physics_cfg},
+          "interaction": {{
+            "dragNodes": true,
+            "zoomView": true,
+            "dragView": true,
+            "hover": true,
+            "multiselect": true,
+            "tooltipDelay": 100
+          }},
+          "nodes": {{
+            "borderWidth": 2,
+            "borderWidthSelected": 3,
+            "shadow": {{
+              "enabled": true,
+              "color": "rgba(15, 23, 42, 0.08)",
+              "size": 8,
+              "x": 0,
+              "y": 2
+            }}
+          }},
+          "edges": {{
+            "smooth": {{
+              "type": "curvedCW",
+              "roundness": 0.16
+            }},
+            "arrows": {{ "to": {{ "enabled": true, "scaleFactor": 0.7 }} }},
+            "font": {{
+              "size": 10,
+              "face": "JetBrains Mono, Cairo, sans-serif",
+              "color": "#475569",
+              "background": "#fcfdff",
+              "strokeWidth": 0,
+              "align": "middle"
+            }},
+            "selectionWidth": 2.5
+          }}
+        }}
         """)
+
+        def _cy(idx: int, total: int, step: int = 105) -> int:
+            return int((idx - (total - 1) / 2.0) * step)
+
+        x_pat = -480
+        x_mid = -150
+        x_cond = 210
+        x_proto = 560
 
         p_display_name = p_name if is_ar else pat_rec["name"]
         p_node = f"pat_{selected_pid}"
-        net.add_node(p_node, label=f"{p_display_name}\n({selected_pid})", level=0, color="#2563eb", size=26, shape="dot", font={"color": "#0f172a", "size": 13, "bold": True})
+        net.add_node(
+            p_node,
+            label=f"{p_display_name}\n({selected_pid})",
+            title=f"Patient: {p_display_name} | HR: {pat_rec['hr_bpm']} | SpO2: {pat_rec['spo2_pct']}%",
+            x=x_pat,
+            y=0,
+            color={"background": "#2563eb", "border": "#1d4ed8"},
+            size=26,
+            shape="dot",
+            font={"color": "#0f172a", "size": 13, "bold": True},
+        )
 
-        for s in trace.presented_symptoms:
-            s_node = f"sym_{s['symptom_id']}"
-            s_col = "#dc2626" if s["is_red_flag"] else "#059669"
-            s_label = SYM_AR.get(s["symptom_id"], s["name"]) if is_ar else s["name"]
-            net.add_node(s_node, label=s_label, title=f"{s['body_system']} | Red Flag: {s['is_red_flag']}", level=1, color=s_col, size=18, shape="dot", font={"color": s_col, "size": 11})
-            net.add_edge(p_node, s_node, title="PRESENTS_SYMPTOM", color=s_col, width=2)
+        # Stack Symptoms + Risk Factors cleanly on Level 1 (free to drag 360° after load)
+        mid_nodes = [("SYM", s) for s in trace.presented_symptoms] + [("RISK", rf) for rf in trace.active_risk_factors]
+        for idx, (kind, obj) in enumerate(mid_nodes):
+            y_pos = _cy(idx, len(mid_nodes), step=105)
+            if kind == "SYM":
+                s = obj
+                s_node = f"sym_{s['symptom_id']}"
+                s_col = "#dc2626" if s["is_red_flag"] else "#059669"
+                s_label = SYM_AR.get(s["symptom_id"], s["name"]) if is_ar else s["name"]
+                edge_lbl = ("يعاني من" if is_ar else "PRESENTS") if kg_show_edges else ""
+                net.add_node(
+                    s_node,
+                    label=s_label,
+                    title=f"{s['body_system']} | Red Flag: {s['is_red_flag']} | Weight: {s['severity_weight']}/5",
+                    x=x_mid,
+                    y=y_pos,
+                    color={"background": s_col, "border": s_col},
+                    size=18,
+                    shape="dot",
+                    font={"color": s_col, "size": 11, "bold": s["is_red_flag"]},
+                )
+                net.add_edge(p_node, s_node, label=edge_lbl, title="PRESENTS_SYMPTOM", color=s_col, width=2)
+            else:
+                rf = obj
+                r_node = f"rf_{rf['risk_id']}"
+                r_label = RISK_AR.get(rf["risk_id"], rf["name"]) if is_ar else rf["name"]
+                edge_lbl = ("عامل خطورة" if is_ar else "HAS_RISK") if kg_show_edges else ""
+                net.add_node(
+                    r_node,
+                    label=r_label,
+                    title=rf["escalation_note"],
+                    x=x_mid,
+                    y=y_pos,
+                    color={"background": "#d97706", "border": "#b45309"},
+                    size=18,
+                    shape="triangle",
+                    font={"color": "#b45309", "size": 11},
+                )
+                net.add_edge(p_node, r_node, label=edge_lbl, title="HAS_RISK_FACTOR", color="#d97706", width=1.8, dashes=True)
 
-        for rf in trace.active_risk_factors:
-            r_node = f"rf_{rf['risk_id']}"
-            r_label = RISK_AR.get(rf["risk_id"], rf["name"]) if is_ar else rf["name"]
-            net.add_node(r_node, label=r_label, title=rf["escalation_note"], level=1, color="#d97706", size=18, shape="triangle", font={"color": "#b45309", "size": 11})
-            net.add_edge(p_node, r_node, title="HAS_RISK_FACTOR", color="#d97706", width=1.8, dashes=True)
-
-        for c in trace.suspected_conditions[:4]:
+        top_conds = trace.suspected_conditions[:4]
+        for idx, c in enumerate(top_conds):
             c_node = f"cond_{c['condition_id']}"
             c_label = COND_AR.get(c["condition_id"], c["name"]) if is_ar else c["name"]
             net.add_node(
                 c_node,
                 label=f"{c_label}\n[{c['triage_level']} • {c['confidence_score']:.0f}%]",
                 title=c["clinical_summary"],
-                level=2,
-                color="#7c3aed",
+                x=x_cond,
+                y=_cy(idx, len(top_conds), step=135),
+                color={"background": "#7c3aed", "border": "#5b21b6"},
                 size=22,
                 shape="box",
+                margin=10,
+                shapeProperties={"borderRadius": 8},
                 font={"color": "#ffffff", "size": 11, "bold": True},
             )
+            ind_lbl = ("يشير إلى" if is_ar else "INDICATES") if kg_show_edges else ""
             for s in trace.presented_symptoms:
                 if s["name"] in c["matched_symptoms"]:
-                    net.add_edge(f"sym_{s['symptom_id']}", c_node, title="INDICATES", color="#7c3aed", width=1.6)
+                    net.add_edge(f"sym_{s['symptom_id']}", c_node, label=ind_lbl, title="INDICATES", color="#7c3aed", width=1.6)
             for esc_item in trace.risk_escalations:
                 if esc_item["condition_id"] == c["condition_id"]:
-                    net.add_edge(f"rf_{esc_item['risk_id']}", c_node, title=f"ESCALATES (+{esc_item['points']})", color="#d97706", width=1.8, dashes=True)
+                    esc_lbl = (f"يضاعف +{esc_item['points']}" if is_ar else f"ESCALATES +{esc_item['points']}") if kg_show_edges else ""
+                    net.add_edge(f"rf_{esc_item['risk_id']}", c_node, label=esc_lbl, title=esc_item["rationale"], color="#d97706", width=1.8, dashes=True)
+
+        if kg_show_protos and trace.protocols:
+            cond_name_to_id = {c["name"]: c["condition_id"] for c in top_conds}
+            shown_protos = trace.protocols[:5]
+            for idx, p in enumerate(shown_protos):
+                p_id_node = f"proto_{p['protocol_id']}"
+                is_contra = p["action_type"] == "CONTRAINDICATION"
+                p_col = "#dc2626" if is_contra else "#0284c7"
+                p_bg = "#fef2f2" if is_contra else "#f0f9ff"
+                p_fg = "#991b1b" if is_contra else "#0c4a6e"
+                raw_instr = PROTOCOLS_AR.get(p["protocol_id"], p["instruction"]) if is_ar else p["instruction"]
+                short_instr = raw_instr[:38] + ("..." if len(raw_instr) > 38 else "")
+                net.add_node(
+                    p_id_node,
+                    label=f"{p['protocol_id']}\n{short_instr}",
+                    title=raw_instr,
+                    x=x_proto,
+                    y=_cy(idx, len(shown_protos), step=115),
+                    color={"background": p_bg, "border": p_col},
+                    shape="box",
+                    margin=8,
+                    shapeProperties={"borderRadius": 8},
+                    font={"color": p_fg, "size": 10.5, "bold": is_contra},
+                )
+                parent_cid = cond_name_to_id.get(p["condition_name"])
+                if parent_cid:
+                    plbl = (("ممنوع" if is_contra else "إجراء") if is_ar else ("CONTRAINDICATED" if is_contra else "PROTOCOL")) if kg_show_edges else ""
+                    net.add_edge(f"cond_{parent_cid}", p_id_node, label=plbl, title=p["action_type"], color=p_col, width=1.6, dashes=[4, 4] if is_contra else False)
 
         graph_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "graph_triage.html")
         net.save_graph(graph_path)
         with open(graph_path, "r", encoding="utf-8") as f:
             gh = f.read()
 
-        fit_js = """
+        hint_txt = "اسحب أي عقدة بحرية 360°" if is_ar else "Drag any node freely in 360°"
+        fit_lbl = "توسيط" if is_ar else "Fit View"
+        rst_lbl = "إعادة الترتيب" if is_ar else "Reset Layout"
+
+        fit_js = f"""
+<style>
+  html, body {{
+    background-color: #fcfdff !important;
+    background-image: radial-gradient(rgba(15, 23, 42, 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: 'Plus Jakarta Sans', 'Cairo', sans-serif;
+  }}
+  .kg-toolbar {{
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(6px);
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 4px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+  }}
+  .kg-hint {{
+    font-size: 11px;
+    color: #64748b;
+    padding: 0 8px;
+    border-right: 1px solid #e2e8f0;
+  }}
+  .kg-btn {{
+    border: 1px solid transparent;
+    background: transparent;
+    color: #334155;
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 4px 9px;
+    border-radius: 6px;
+    cursor: pointer;
+  }}
+  .kg-btn:hover {{ background: #eff6ff; color: #0284c7; }}
+</style>
+<div class="kg-toolbar">
+  <span class="kg-hint">{hint_txt}</span>
+  <button class="kg-btn" onclick="kgZoom(1.22)">+</button>
+  <button class="kg-btn" onclick="kgZoom(0.82)">-</button>
+  <button class="kg-btn" onclick="kgFit()">{fit_lbl}</button>
+  <button class="kg-btn" onclick="kgReset()">{rst_lbl}</button>
+</div>
 <script>
-(function(){
-  function refit(){
-    if(typeof network!=="undefined"&&network!==null){
-      var el=document.getElementById("mynetwork");
-      if(el&&el.clientWidth>50&&el.clientHeight>50){
-        network.redraw();
-        network.fit({animation:{duration:250,easingFunction:"easeInOutQuad"}});
-      }
-    }
-  }
-  var c=setInterval(function(){
-    if(typeof network!=="undefined"&&network!==null){
+var initialPositions = null;
+function kgCapture(){{
+  if(!initialPositions && typeof network!=="undefined" && network!==null){{
+    initialPositions = network.getPositions();
+  }}
+}}
+function kgFit(){{
+  if(typeof network!=="undefined"&&network!==null){{
+    var el=document.getElementById("mynetwork");
+    if(el&&el.clientWidth>50&&el.clientHeight>50){{
+      kgCapture();
+      network.redraw();
+      network.fit({{animation:{{duration:240,easingFunction:"easeInOutQuad"}}}});
+    }}
+  }}
+}}
+function kgZoom(f){{
+  if(typeof network!=="undefined"&&network!==null){{
+    network.moveTo({{scale: network.getScale()*f, animation:{{duration:180,easingFunction:"easeInOutQuad"}}}});
+  }}
+}}
+function kgReset(){{
+  if(typeof network!=="undefined"&&network!==null&&initialPositions){{
+    Object.keys(initialPositions).forEach(function(id){{
+      network.moveNode(id, initialPositions[id].x, initialPositions[id].y);
+    }});
+    setTimeout(kgFit, 60);
+  }}
+}}
+(function(){{
+  var c=setInterval(function(){{
+    if(typeof network!=="undefined"&&network!==null){{
       clearInterval(c);
-      refit();
+      kgFit();
       var el=document.getElementById("mynetwork");
-      if(el&&typeof ResizeObserver!=="undefined"){
-        new ResizeObserver(function(){ setTimeout(refit, 60); }).observe(el);
-      }
-      window.addEventListener("resize", function(){ setTimeout(refit, 60); });
-    }
-  }, 80);
-})();
+      if(el&&typeof ResizeObserver!=="undefined"){{
+        new ResizeObserver(function(){{ setTimeout(kgFit, 60); }}).observe(el);
+      }}
+      if(el&&typeof IntersectionObserver!=="undefined"){{
+        new IntersectionObserver(function(entries){{
+          if(entries[0]&&entries[0].isIntersecting){{ setTimeout(kgFit, 80); }}
+        }}).observe(el);
+      }}
+      window.addEventListener("resize", function(){{ setTimeout(kgFit, 60); }});
+    }}
+  }}, 80);
+}})();
 </script>
 """
-        gh = gh.replace("<body>", '<body style="background:#ffffff;margin:0;padding:0;overflow:hidden;">')
+        gh = gh.replace("<body>", "<body>")
         gh = gh.replace("</body>", fit_js + "</body>")
-        components.html(gh, height=580)
+        components.html(gh, height=600)
     except Exception as e:
         st.warning(f"Unable to render graph: {e}")
 
