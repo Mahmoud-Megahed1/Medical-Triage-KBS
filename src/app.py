@@ -1241,6 +1241,8 @@ with tab4:
             font={"color": "#0f172a", "size": 13, "bold": True},
         )
 
+        edge_font = {"color": "#1e293b", "size": 10, "background": "#fcfdff", "strokeWidth": 2, "strokeColor": "#fcfdff"}
+
         # Stack Symptoms + Risk Factors cleanly on Level 1 (free to drag 360° after load)
         mid_nodes = [("SYM", s) for s in trace.presented_symptoms] + [("RISK", rf) for rf in trace.active_risk_factors]
         for idx, (kind, obj) in enumerate(mid_nodes):
@@ -1262,7 +1264,7 @@ with tab4:
                     shape="dot",
                     font={"color": s_col, "size": 11, "bold": s["is_red_flag"]},
                 )
-                net.add_edge(p_node, s_node, label=edge_lbl, title="PRESENTS_SYMPTOM", color=s_col, width=2)
+                net.add_edge(p_node, s_node, label=edge_lbl, title="PRESENTS_SYMPTOM", color=s_col, width=2, font=edge_font)
             else:
                 rf = obj
                 r_node = f"rf_{rf['risk_id']}"
@@ -1279,7 +1281,7 @@ with tab4:
                     shape="triangle",
                     font={"color": "#b45309", "size": 11},
                 )
-                net.add_edge(p_node, r_node, label=edge_lbl, title="HAS_RISK_FACTOR", color="#d97706", width=1.8, dashes=True)
+                net.add_edge(p_node, r_node, label=edge_lbl, title="HAS_RISK_FACTOR", color="#d97706", width=1.8, dashes=True, font=edge_font)
 
         top_conds = trace.suspected_conditions[:4]
         for idx, c in enumerate(top_conds):
@@ -1301,11 +1303,11 @@ with tab4:
             ind_lbl = ("يشير إلى" if is_ar else "INDICATES") if kg_show_edges else ""
             for s in trace.presented_symptoms:
                 if s["name"] in c["matched_symptoms"]:
-                    net.add_edge(f"sym_{s['symptom_id']}", c_node, label=ind_lbl, title="INDICATES", color="#7c3aed", width=1.6)
+                    net.add_edge(f"sym_{s['symptom_id']}", c_node, label=ind_lbl, title="INDICATES", color="#7c3aed", width=1.6, font=edge_font)
             for esc_item in trace.risk_escalations:
                 if esc_item["condition_id"] == c["condition_id"]:
                     esc_lbl = (f"يضاعف +{esc_item['points']}" if is_ar else f"ESCALATES +{esc_item['points']}") if kg_show_edges else ""
-                    net.add_edge(f"rf_{esc_item['risk_id']}", c_node, label=esc_lbl, title=esc_item["rationale"], color="#d97706", width=1.8, dashes=True)
+                    net.add_edge(f"rf_{esc_item['risk_id']}", c_node, label=esc_lbl, title=esc_item["rationale"], color="#d97706", width=1.8, dashes=True, font=edge_font)
 
         if kg_show_protos and trace.protocols:
             cond_name_to_id = {c["name"]: c["condition_id"] for c in top_conds}
@@ -1333,7 +1335,7 @@ with tab4:
                 parent_cid = cond_name_to_id.get(p["condition_name"])
                 if parent_cid:
                     plbl = (("ممنوع" if is_contra else "إجراء") if is_ar else ("CONTRAINDICATED" if is_contra else "PROTOCOL")) if kg_show_edges else ""
-                    net.add_edge(f"cond_{parent_cid}", p_id_node, label=plbl, title=p["action_type"], color=p_col, width=1.6, dashes=[4, 4] if is_contra else False)
+                    net.add_edge(f"cond_{parent_cid}", p_id_node, label=plbl, title=p["action_type"], color=p_col, width=1.6, dashes=[4, 4] if is_contra else False, font=edge_font)
 
         graph_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "graph_triage.html")
         net.save_graph(graph_path)
