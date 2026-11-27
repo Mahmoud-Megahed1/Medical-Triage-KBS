@@ -9,3 +9,4 @@ env/
 src/graph_triage.html
 .DS_Store
 Thumbs.db
+lib/
